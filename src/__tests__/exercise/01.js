@@ -16,6 +16,12 @@ test('counter increments and decrements when the buttons are clicked', () => {
   document.body.append(div);
   act(() => createRoot(div).render(<Counter />));
 
+  const mouseClickEvent = new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true,
+    button: 0,
+  });
+
   // 🐨 get a reference to the increment and decrement buttons:
   const [decrementButton, incrementButton] = div.querySelectorAll('button');
   // 🐨 get a reference to the message div:
@@ -25,10 +31,12 @@ test('counter increments and decrements when the buttons are clicked', () => {
   // 🐨 expect the message.textContent toBe 'Current count: 0'
   expect(messageDiv.textContent).toBe('Current count: 0');
   // 🐨 click the increment button (💰 act(() => increment.click()))
-  act(() => incrementButton.click());
+  // act(() => incrementButton.click());
+  act(() => incrementButton.dispatchEvent(mouseClickEvent));
   expect(messageDiv.textContent).toBe('Current count: 1');
 
-  act(() => decrementButton.click());
+  // act(() => decrementButton.click());
+  act(() => decrementButton.dispatchEvent(mouseClickEvent));
   expect(messageDiv.textContent).toBe('Current count: 0');
 
   div.remove();
