@@ -8,10 +8,8 @@ import faker from 'faker';
 import Login from '../../components/login';
 
 test('submitting the form calls onSubmit with username and password', async () => {
-  const mockData = {
-    username: faker.internet.userName(),
-    password: faker.internet.password(),
-  };
+  // const mockData = buildLoginForm({ username: 'testUser' });
+  const mockData = buildLoginForm();
   const mockHandle = jest.fn();
   // 🐨 create a variable called "submittedData" and a handleSubmit function that
   // accepts the data and assigns submittedData to the data that was submitted
@@ -37,6 +35,25 @@ test('submitting the form calls onSubmit with username and password', async () =
   // 💰 use `toEqual` from Jest: 📜 https://jestjs.io/docs/en/expect#toequalvalue
   expect(mockHandle).toHaveBeenCalledWith(mockData);
 });
+
+function buildLoginForm(defaultValues = {}) {
+  const mockData = {
+    username: defaultValues.username || faker.internet.userName(),
+    password: defaultValues.password || faker.internet.password(),
+  };
+  return mockData;
+}
+
+/*
+ * Function as Kent did it in the course
+ */
+function buildLoginFormKentWay(defaultValues) {
+  return {
+    username: faker.internet.username(),
+    password: faker.internet.password(),
+    ...defaultValues,
+  };
+}
 
 /*
 eslint
