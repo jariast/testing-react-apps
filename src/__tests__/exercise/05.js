@@ -62,7 +62,7 @@ test(`logging in displays the user's username`, async () => {
 });
 
 test('An error is displayed when a field is missing', async () => {
-  const { asFragment } = render(<Login />);
+  render(<Login />);
   const { username } = buildLoginForm();
 
   await userEvent.type(screen.getByLabelText(/username/i), username);
@@ -78,52 +78,7 @@ test('An error is displayed when a field is missing', async () => {
   // once the login is successful, then the loading spinner disappears and
   // we render the username.
   // 🐨 assert that the username is on the screen
-  // expect(screen.getByText('password required')).toBeInTheDocument();
-  expect(asFragment()).toMatchInlineSnapshot(`
-    <DocumentFragment>
-      <form>
-        <div>
-          <label
-            for="username-field"
-          >
-            Username
-          </label>
-          <input
-            id="username-field"
-            name="username"
-            type="text"
-          />
-        </div>
-        <div>
-          <label
-            for="password-field"
-          >
-            Password
-          </label>
-          <input
-            id="password-field"
-            name="password"
-            type="password"
-          />
-        </div>
-        <div>
-          <button
-            type="submit"
-          >
-            Submit
-          </button>
-        </div>
-      </form>
-      <div
-        style="height: 200px;"
-      >
-        <div
-          role="alert"
-          style="color: red;"
-        >
-          password required
-        </div>
-      </div>
-    </DocumentFragment>
-  `);
+  expect(
+    screen.getByText('password required').textContent,
+  ).toMatchInlineSnapshot(`"password required"`);
 });
