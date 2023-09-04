@@ -60,3 +60,23 @@ test(`logging in displays the user's username`, async () => {
   // 🐨 assert that the username is on the screen
   expect(screen.getByText(username)).toBeInTheDocument();
 });
+
+test('An error is displayed when a field is missing', async () => {
+  render(<Login />);
+  const { username, password } = buildLoginForm();
+
+  await userEvent.type(screen.getByLabelText(/username/i), username);
+  // 🐨 uncomment this and you'll start making the request!
+  await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+  // as soon as the user hits submit, we render a spinner to the screen. That
+  // spinner has an aria-label of "loading" for accessibility purposes, so
+  // 🐨 wait for the loading spinner to be removed using waitForElementToBeRemoved
+  // 📜 https://testing-library.com/docs/dom-testing-library/api-async#waitforelementtoberemoved
+  await waitForElementToBeRemoved(screen.queryByLabelText(/loading/i));
+
+  // once the login is successful, then the loading spinner disappears and
+  // we render the username.
+  // 🐨 assert that the username is on the screen
+  expect(screen.getByText('password required')).toBeInTheDocument();
+});
