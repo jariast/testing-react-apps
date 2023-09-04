@@ -2,9 +2,9 @@
 // http://localhost:3000/easy-button
 
 import * as React from 'react';
-import { screen } from '@testing-library/react';
 import EasyButton from '../../components/easy-button';
-import { render } from 'test/test-utils';
+//The utils are exporting all the RTLs exports as well
+import { render, screen } from 'test/test-utils';
 
 test('renders with the light styles for the light theme', () => {
   render(<EasyButton>Easy</EasyButton>);
