@@ -14,6 +14,7 @@ import { build, fake } from '@jackfranklin/test-data-bot';
 import Login from '../../components/login-submission';
 import { handlers } from 'test/server-handlers';
 import { setupServer } from 'msw/lib/node';
+import { rest } from 'msw';
 
 //This no longer for works for the new version of test-data-bot
 const buildLoginForm = build({
@@ -81,4 +82,36 @@ test('An error is displayed when a field is missing', async () => {
   expect(
     screen.getByText('password required').textContent,
   ).toMatchInlineSnapshot(`"password required"`);
+});
+
+test('It should handle unknown server error', async () => {
+  render(<Login />);
+  const { username, password } = buildLoginForm();
+
+  server.use(
+    rest.post(
+      'https://auth-provider.example.com/api/login',
+      async (_req, res, ctx) => {
+        return res(ctx.status(500));
+      },
+    ),
+  );
+
+  await userEvent.type(screen.getByLabelText(/username/i), username);
+  await userEvent.type(screen.getByLabelText(/password/i), password);
+  // 🐨 uncomment this and you'll start making the request!
+  await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+  // as soon as the user hits submit, we render a spinner to the screen. That
+  // spinner has an aria-label of "loading" for accessibility purposes, so
+  // 🐨 wait for the loading spinner to be removed using waitForElementToBeRemoved
+  // 📜 https://testing-library.com/docs/dom-testing-library/api-async#waitforelementtoberemoved
+  expect(screen.queryByLabelText(/loading/i)).toBeInTheDocument();
+
+  // once the login is successful, then the loading spinner disappears and
+  // we render the username.
+  // 🐨 assert that the username is on the screen
+  // expect(
+  //   screen.getByText('password required').textContent,
+  // ).toMatchInlineSnapshot(`"password required"`);
 });
