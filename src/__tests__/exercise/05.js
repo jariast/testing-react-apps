@@ -88,11 +88,13 @@ test('It should handle unknown server error', async () => {
   render(<Login />);
   const { username, password } = buildLoginForm();
 
+  const errorMessage = 'something went wrong';
+
   server.use(
     rest.post(
       'https://auth-provider.example.com/api/login',
       async (_req, res, ctx) => {
-        return res(ctx.status(500));
+        return res(ctx.status(500), ctx.json({ message: errorMessage }));
       },
     ),
   );
@@ -106,12 +108,7 @@ test('It should handle unknown server error', async () => {
   // spinner has an aria-label of "loading" for accessibility purposes, so
   // 🐨 wait for the loading spinner to be removed using waitForElementToBeRemoved
   // 📜 https://testing-library.com/docs/dom-testing-library/api-async#waitforelementtoberemoved
-  expect(screen.queryByLabelText(/loading/i)).toBeInTheDocument();
 
-  // once the login is successful, then the loading spinner disappears and
-  // we render the username.
-  // 🐨 assert that the username is on the screen
-  // expect(
-  //   screen.getByText('password required').textContent,
-  // ).toMatchInlineSnapshot(`"password required"`);
+  await waitForElementToBeRemoved(screen.queryByLabelText(/loading/i));
+  expect(screen.getByRole('alert').textContent).toBe(errorMessage);
 });
