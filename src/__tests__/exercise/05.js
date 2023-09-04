@@ -12,7 +12,7 @@ import userEvent from '@testing-library/user-event';
 import { build, fake } from '@jackfranklin/test-data-bot';
 // 🐨 you'll need to import rest from 'msw' and setupServer from msw/node
 import Login from '../../components/login-submission';
-import { rest } from 'msw';
+import { handlers } from 'test/server-handlers';
 import { setupServer } from 'msw/lib/node';
 
 //This no longer for works for the new version of test-data-bot
@@ -23,11 +23,7 @@ const buildLoginForm = build({
   },
 });
 
-const server = setupServer(
-  rest.post('https://auth-provider.example.com/api/login', (req, res, ctx) => {
-    return res(ctx.json({ username: req.body.username }));
-  }),
-);
+const server = setupServer(...handlers);
 // 🐨 get the server setup with an async function to handle the login POST request:
 // 💰 here's something to get you started
 // rest.post(
